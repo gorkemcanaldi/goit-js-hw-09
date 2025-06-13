@@ -6,6 +6,7 @@ import SortCss from 'postcss-sort-media-queries';
 
 export default defineConfig(({ command }) => {
   return {
+    base: '/goit-js-hw-09/', // BUNU EKLE!
     define: {
       [command === 'serve' ? 'global' : '_global']: {},
     },
