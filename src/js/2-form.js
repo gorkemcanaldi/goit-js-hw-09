@@ -1,58 +1,58 @@
+const form = document.querySelector('.feedback-form');
 const STORAGE_KEY = 'feedback-form-state';
 
-const form = document.querySelector('.feedback-form');
+// 🌟 Global formData nesnesi
+let formData = {
+  email: '',
+  message: '',
+};
 
-// 1. Sayfa yüklendiğinde localStorage'dan varsa doldur
-populateForm();
+// 🌟 Başlangıçta localStorage'ı kontrol et ve formu doldur
+loadFromStorage();
 
-// 2. Input delegasyonu ile form alanları değiştiğinde localStorage'a kaydet
-form.addEventListener('input', event => {
-  // Sadece input ve textarea'ya bak
-  if (event.target.name === 'email' || event.target.name === 'message') {
-    saveToStorage();
+// 🌟 Form input olayını delegasyonla dinle
+form.addEventListener('input', onInput);
+
+// 🌟 Form submit olayını dinle
+form.addEventListener('submit', onSubmit);
+
+// Fonksiyon: Input değişince formData'yı güncelle ve kaydet
+function onInput(evt) {
+  const { name, value } = evt.target;
+  formData[name] = value.trim();
+  saveToStorage();
+}
+
+// Fonksiyon: localStorage'a yaz
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+}
+
+// Fonksiyon: Sayfa açıldığında localStorage'dan oku
+function loadFromStorage() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    formData = JSON.parse(saved);
+    form.email.value = formData.email || '';
+    form.message.value = formData.message || '';
   }
-});
+}
 
-// 3. Form submit olunca kontrol et, konsola yaz, formu ve storage'u temizle
-form.addEventListener('submit', event => {
-  event.preventDefault();
+// Fonksiyon: Form gönderildiğinde
+function onSubmit(evt) {
+  evt.preventDefault();
 
-  const email = form.email.value.trim();
-  const message = form.message.value.trim();
-
-  if (email === '' || message === '') {
-    alert('Lütfen email ve mesaj alanlarını doldurun.');
+  // Boş alan kontrolü
+  if (formData.email === '' || formData.message === '') {
+    alert('Lütfen tüm alanları doldurun!');
     return;
   }
 
   // Konsola yaz
-  console.log({ email, message });
+  console.log(formData);
 
   // Temizle
+  formData = { email: '', message: '' };
   localStorage.removeItem(STORAGE_KEY);
   form.reset();
-});
-
-// Yardımcı fonksiyonlar
-
-function saveToStorage() {
-  const data = {
-    email: form.email.value.trim(),
-    message: form.message.value.trim(),
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function populateForm() {
-  const savedData = localStorage.getItem(STORAGE_KEY);
-  if (savedData) {
-    try {
-      const parsed = JSON.parse(savedData);
-      form.email.value = parsed.email || '';
-      form.message.value = parsed.message || '';
-    } catch {
-      // Bozuk veri varsa temizle
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }
 }
