@@ -1,0 +1,2 @@
+import"./styles-CsKOxUV9.js";const t=document.getElementById("contact-form");t.addEventListener("submit",r=>{r.preventDefault();const a=new FormData(t),e={};if(a.forEach((n,i)=>{e[i]=n.trim()}),!e.name||!e.email||!e.message){alert("Lütfen tüm alanları doldurun.");return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email)){alert("Geçerli bir e-posta girin.");return}console.log("Form verisi:",e),alert("Mesajınız gönderildi!"),t.reset()});
+//# sourceMappingURL=2-form-BWHK9RTG.js.map
