@@ -7,14 +7,16 @@
   </head>
   <body>
     <main>
-      <form class="feedback-form" action="#" novalidate>
-        <label for="email">E-posta:</label>
-        <input type="email" id="email" name="email" required />
-
-        <label for="message">Mesaj:</label>
-        <textarea id="message" name="message" required></textarea>
-
-        <button type="submit">Gönder</button>
+      <form class="feedback-form" autocomplete="off">
+        <label>
+          Email
+          <input type="email" name="email" autofocus />
+        </label>
+        <label>
+          Message
+          <textarea name="message" rows="8"></textarea>
+        </label>
+        <button type="submit">Submit</button>
       </form>
     </main>
 

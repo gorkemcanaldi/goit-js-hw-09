@@ -1,32 +1,58 @@
-const form = document.querySelector('.feedback-form');
 const STORAGE_KEY = 'feedback-form-state';
 
-let formData = {
-  email: '',
-  message: '',
-};
+const form = document.querySelector('.feedback-form');
 
-// Sayfa açıldığında localStorage'dan formu doldur
-const savedData = localStorage.getItem(STORAGE_KEY);
-if (savedData) {
-  formData = JSON.parse(savedData);
-  form.email.value = formData.email || '';
-  form.message.value = formData.message || '';
-}
+// 1. Sayfa yüklendiğinde localStorage'dan varsa doldur
+populateForm();
 
-// input olayında formData'yı güncelle ve localStorage'a yaz
+// 2. Input delegasyonu ile form alanları değiştiğinde localStorage'a kaydet
 form.addEventListener('input', event => {
-  formData[event.target.name] = event.target.value;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  // Sadece input ve textarea'ya bak
+  if (event.target.name === 'email' || event.target.name === 'message') {
+    saveToStorage();
+  }
 });
 
-// form submit olunca
+// 3. Form submit olunca kontrol et, konsola yaz, formu ve storage'u temizle
 form.addEventListener('submit', event => {
   event.preventDefault();
 
-  console.log(formData);
+  const email = form.email.value.trim();
+  const message = form.message.value.trim();
 
-  form.reset();
+  if (email === '' || message === '') {
+    alert('Lütfen email ve mesaj alanlarını doldurun.');
+    return;
+  }
+
+  // Konsola yaz
+  console.log({ email, message });
+
+  // Temizle
   localStorage.removeItem(STORAGE_KEY);
-  formData = { email: '', message: '' };
+  form.reset();
 });
+
+// Yardımcı fonksiyonlar
+
+function saveToStorage() {
+  const data = {
+    email: form.email.value.trim(),
+    message: form.message.value.trim(),
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function populateForm() {
+  const savedData = localStorage.getItem(STORAGE_KEY);
+  if (savedData) {
+    try {
+      const parsed = JSON.parse(savedData);
+      form.email.value = parsed.email || '';
+      form.message.value = parsed.message || '';
+    } catch {
+      // Bozuk veri varsa temizle
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+}
